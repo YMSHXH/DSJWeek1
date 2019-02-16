@@ -66,7 +66,7 @@ public class GoodsAdapter extends XRecyclerView.Adapter<GoodsAdapter.GoodsAdapte
     public void onBindViewHolder(@NonNull GoodsAdapterVH goodsAdapterVH, int i) {
         final Goods.ResultBean resultBean = list.get(i);
         goodsAdapterVH.serTitle.setText(resultBean.getCommodityName());
-        goodsAdapterVH.serPrice.setText(resultBean.getPrice());
+        goodsAdapterVH.serPrice.setText("￥:"+resultBean.getPrice());
         goodsAdapterVH.serSum.setText(resultBean.getSaleNum());
         Uri uri = Uri.parse(resultBean.getMasterPic());
         goodsAdapterVH.serImg.setImageURI(uri);

@@ -29,6 +29,8 @@ dependencies {
 
     //Fresco
     implementation 'com.facebook.fresco:fresco:1.12.1'
+    //Glide
+    implementation 'com.github.bumptech.glide:glide:4.8.0'
 
     //retrfit
     implementation 'com.squareup.retrofit2:retrofit:2.4.0'
@@ -47,6 +49,8 @@ dependencies {
 
     //greendao
     implementation 'org.greenrobot:greendao:3.2.2' // add library
+
+    implementation 'com.github.xiaohaibin:XBanner:1.6.4'
 }
 
 //与V7包的适配

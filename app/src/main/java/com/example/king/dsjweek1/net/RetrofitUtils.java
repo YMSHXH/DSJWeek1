@@ -1,7 +1,10 @@
 package com.example.king.dsjweek1.net;
 
 import com.example.king.dsjweek1.api.Api;
+import com.example.king.dsjweek1.api.ApiServer.GoodApiService;
+import com.example.king.dsjweek1.api.ApiServer.GoodMegApiService;
 import com.example.king.dsjweek1.entity.Goods;
+import com.example.king.dsjweek1.entity.GoodsMegEntity;
 
 import java.util.Map;
 
@@ -61,6 +64,26 @@ public class RetrofitUtils {
 
             @Override
             public void onFailure(Call<Goods> call, Throwable t) {
+                retrofitUtilsCallBack.failure("网络错误");
+            }
+        });
+    }
+
+    public void setGoodsMeg(String api, String commodityId, final RetrofitUtilsCallBack retrofitUtilsCallBack){
+        //模式：外观模式
+        //设计模式：构建者模式
+        //第二步 ,创建请求接口类对象，体现一个动态代理模式
+        GoodMegApiService goodMegApiService = retrofit.create(GoodMegApiService.class);
+        Call<GoodsMegEntity> goodsMegEntityCall = goodMegApiService.megReg(api, commodityId);
+        goodsMegEntityCall.enqueue(new Callback<GoodsMegEntity>() {
+            @Override
+            public void onResponse(Call<GoodsMegEntity> call, Response<GoodsMegEntity> response) {
+                GoodsMegEntity body = response.body();
+                retrofitUtilsCallBack.success(body);
+            }
+
+            @Override
+            public void onFailure(Call<GoodsMegEntity> call, Throwable t) {
                 retrofitUtilsCallBack.failure("网络错误");
             }
         });

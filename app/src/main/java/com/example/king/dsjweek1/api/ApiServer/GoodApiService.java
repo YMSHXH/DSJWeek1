@@ -1,4 +1,4 @@
-package com.example.king.dsjweek1.net;
+package com.example.king.dsjweek1.api.ApiServer;
 
 import com.example.king.dsjweek1.entity.Goods;
 
