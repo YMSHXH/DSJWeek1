@@ -10,13 +10,20 @@ import android.widget.Toast;
 import com.example.king.dsjweek1.R;
 import com.example.king.dsjweek1.adapter.GoodsAdapter;
 import com.example.king.dsjweek1.api.Api;
+import com.example.king.dsjweek1.common.Commons;
 import com.example.king.dsjweek1.contact.GoodsContact;
+import com.example.king.dsjweek1.entity.Co_Goods;
 import com.example.king.dsjweek1.entity.Goods;
+import com.example.king.dsjweek1.greendao.Co_GoodsDao;
+import com.example.king.dsjweek1.greendao.DaoSession;
 import com.example.king.dsjweek1.myview.SearchView;
 import com.example.king.dsjweek1.presenter.GoodsPresenter;
+import com.example.king.dsjweek1.utils.GreendaoUtils;
+import com.example.king.dsjweek1.utils.NetWorkUtils;
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
 
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.greendao.annotation.Id;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -52,13 +59,36 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void initData() {
-        list = new ArrayList<>();
+        //初始化数据库
+        GreendaoUtils.getInstance().initGreenDao(this,Commons.DB_NNAME);
+
+        if (!NetWorkUtils.isNetWork(this)) {
+            Co_GoodsDao daoSession = GreendaoUtils.getInstance().getDaoSession().getCo_GoodsDao();//数据库
+            List<Goods.ResultBean> result = new ArrayList<>();
+            //查询数据库
+            List<Co_Goods> co_goods = daoSession.loadAll();
+            for (Co_Goods co_good : co_goods) {
+                Goods.ResultBean resultBean = new Goods.ResultBean();
+                resultBean.setCommodityId(co_good.getCommodityId());
+                resultBean.setCommodityName(co_good.getCommodityName());
+                resultBean.setMasterPic(co_good.getMasterPic());
+                resultBean.setPrice(co_good.getPrice());
+                resultBean.setSaleNum(co_good.getSaleNum());
+                result.add(resultBean);
+            }
+            System.out.println("查询==="+ co_goods.size());
+            goodsAdapter.setList(result);
+            return;
+        }
+
         goodsPresenter = new GoodsPresenter(this);
         params = new HashMap<>();
-        params.put("keyword","手机");
-        params.put("page",1 + "");
-        params.put("count",10 + "");
+        list = new ArrayList<>();
+        params.put("keyword", "手机");
+        params.put("page", 1 + "");
+        params.put("count", 10 + "");
         goodsPresenter.setGoodsList(Api.GOODS_API, params);
+
     }
 
     private void initView() {
@@ -108,20 +138,45 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void failure(String msg) {
         Toast.makeText(this,msg,Toast.LENGTH_SHORT).show();
-
     }
 
     @Override
     public void success(Object o) {
         Goods goods = (Goods) o;
-        Toast.makeText(this,goods.getMessage(),Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this,goods.getMessage(),Toast.LENGTH_SHORT).show();
+
+        //List<Co_Goods> co_goods = new ArrayList<>();
+
         list = goods.getResult();
+
         if (page == 1) {
             goodsAdapter.setList(list);
         } else {
             goodsAdapter.addList(list);
         }
         page ++;
+        int i = 1;
+        //添加数据库
+        Co_Goods co_goods = new Co_Goods();
+        for (Goods.ResultBean resultBean : list) {
+            Co_GoodsDao daoSession = GreendaoUtils.getInstance().getDaoSession().getCo_GoodsDao();//数据库
+            co_goods.setId(i);
+            co_goods.setCommodityId(resultBean.getCommodityId());
+            co_goods.setCommodityName(resultBean.getCommodityName());
+            co_goods.setMasterPic(resultBean.getMasterPic());
+            co_goods.setPrice(resultBean.getPrice());
+            co_goods.setSaleNum(resultBean.getSaleNum());
+            daoSession.insertOrReplace(co_goods);
+            System.out.println("添加==="+ co_goods.getCommodityName());
+            i++;
+        }
+        Co_GoodsDao daoSession = GreendaoUtils.getInstance().getDaoSession().getCo_GoodsDao();//数据库
+        List<Goods.ResultBean> result = new ArrayList<>();
+        //查询数据库
+        List<Co_Goods> co = daoSession.loadAll();
+        System.out.println("查询2==="+ co.size());
+
+
     }
 
 

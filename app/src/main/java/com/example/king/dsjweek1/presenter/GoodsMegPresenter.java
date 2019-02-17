@@ -15,7 +15,7 @@ public class GoodsMegPresenter {
     public GoodsMegPresenter(GoodsMegContact.IGoodsMegView iGoodsMegView) {
         this.goodsMegModel = new GoodsMegModel();
         this.weakReference = new WeakReference<>(iGoodsMegView);
-        this.iGoodsMegView = iGoodsMegView;
+        this.iGoodsMegView = weakReference.get();
     }
 
     public void setGoodsMegList(String api, String commodityId){

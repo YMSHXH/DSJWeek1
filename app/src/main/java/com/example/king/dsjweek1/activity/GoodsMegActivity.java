@@ -1,5 +1,6 @@
 package com.example.king.dsjweek1.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -12,6 +13,7 @@ import com.example.king.dsjweek1.api.Api;
 import com.example.king.dsjweek1.contact.GoodsMegContact;
 import com.example.king.dsjweek1.entity.GoodsMegEntity;
 import com.example.king.dsjweek1.presenter.GoodsMegPresenter;
+import com.github.chrisbanes.photoview.PhotoView;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -20,7 +22,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class GoodsMegActivity extends AppCompatActivity
-        implements GoodsMegContact.IGoodsMegView {
+        implements GoodsMegContact.IGoodsMegView ,GoodsMegAdapter.BannerCallBack {
 
     @BindView(R.id.recy)
     RecyclerView recy;
@@ -70,6 +72,16 @@ public class GoodsMegActivity extends AppCompatActivity
         //设置适配器
         GoodsMegAdapter goodsMegAdapter = new GoodsMegAdapter(this,result);
         recy.setAdapter(goodsMegAdapter);
+        goodsMegAdapter.setBannerCallBack(this);
 
     }
+
+    @Override
+    public void setPosition(String image) {
+        Toast.makeText(this,image,Toast.LENGTH_SHORT).show();
+        EventBus.getDefault().postSticky(image);
+        startActivity(new Intent(this, PhotoView .class));
+    }
+
+
 }
